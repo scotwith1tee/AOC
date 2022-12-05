@@ -3,41 +3,26 @@ import datetime
 matchPts = [[3,6,0], [0,3,6], [6,0,3]]
 # Array that picks my choice to match the outcome
 # [Opp Play][Lose/Draw/Win]
-inputToMatchOutcome = [[3,6,0], [0,3,6], [6,0,3]]
+inputToMatchOutcome = [['Z','X','Y'], ['X','Y','Z'], ['Y','Z','X']]
 
 def MatchScore(OppPlay, MyPlay):    
     """What's the score of the the match."""
-    # can I define this once outside of the function
-    OppIndex = 0
-    MyIndex = 0
-    #convert the inputs to numbers
-    if OppPlay =='A':
-        OppIndex = 0
-    elif OppPlay == 'B':
-        OppIndex = 1
-    elif OppPlay == 'C':
-        OppIndex = 2
-    else:
-        OppIndex = 0
-        print(OppPlay)
-        print("Bad index")
+    # Find the reference into the array that determines the win/lose/draw points
+    OppIndex = ord(OppPlay) - ord('A')
+    MyIndex = ord(MyPlay) - ord('X')
 
-    if MyPlay =='X':
-        MyIndex = 0
-    elif MyPlay == 'Y':
-        MyIndex = 1
-    elif MyPlay == 'Z':
-        MyIndex = 2
-    else:
-        MyIndex = 0
-        print(MyPlay)
-        print("Bad index")
-
-#    print(matchPts)
-#    print(type(OppIndex),type(MyIndex))
-    print (OppIndex, MyIndex,matchPts[OppIndex][MyIndex])
-#    print (matchPts[0][1])
+    # win/lose/draw points + the points for the play
     return (matchPts[OppIndex][MyIndex] + MyIndex + 1)
+
+def FindPlay(OppPlay, ExpectedOutcome):    
+    """What's the score of the the match."""
+    # Find the reference into the array that determines what move I should make
+    OppIndex = ord(OppPlay) - ord('A')
+    MyIndex = ord(ExpectedOutcome) - ord('X')
+
+    # return the XYZ move that should be made to meet the expected outcome
+    # Use the opponents play and expected outcome.
+    return (inputToMatchOutcome[OppIndex][MyIndex])
 
 
 
@@ -48,11 +33,8 @@ with open('input.txt','r') as f:
     array = f.readlines()
 f.close()
 
-print(MatchScore('A','Y'))
 
-
-
-
+#Part 1
 # Sum of match points
 sum = 0;
 
@@ -62,6 +44,19 @@ for index in range(len(array)):
 
     # See if we are at the end of an elfs list. add another list item
  
-print("total point:",sum)
+print("Part 1: total point:",sum)
 
+
+#Part 2
+# Sum of match points
+sum = 0;
+myMove = ' '
+for index in range(len(array)):
+    #First determine with move to make to match the expected outcome of the game
+    myMove = FindPlay(array[index][0], array[index][2])
+
+    # Determine points for that round using the functon from Part 1
+    sum += MatchScore(array[index][0],myMove)
+
+print("Part 2: total point:",sum)
 
