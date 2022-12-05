@@ -15,7 +15,7 @@ def MatchScore(OppPlay, MyPlay):
     return (matchPts[OppIndex][MyIndex] + MyIndex + 1)
 
 def FindPlay(OppPlay, ExpectedOutcome):    
-    """What's the score of the the match."""
+    """What move to enter to get the expected outcome based on the opponents move."""
     # Find the reference into the array that determines what move I should make
     OppIndex = ord(OppPlay) - ord('A')
     MyIndex = ord(ExpectedOutcome) - ord('X')
