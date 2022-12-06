@@ -37,7 +37,7 @@ f.close()
 #Part 1
 # Sum of match points
 sum = 0;
-
+print(array)
 for index in range(len(array)):
     # Determine points for that round
     sum += MatchScore(array[index][0],array[index][2])
