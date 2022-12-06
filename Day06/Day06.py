@@ -5,24 +5,6 @@ matchPts = [[3,6,0], [0,3,6], [6,0,3]]
 # [Opp Play][Lose/Draw/Win]
 inputToMatchOutcome = [['Z','X','Y'], ['X','Y','Z'], ['Y','Z','X']]
 
-def MatchScore(OppPlay, MyPlay):    
-    """What's the score of the the match."""
-    # Find the reference into the array that determines the win/lose/draw points
-    OppIndex = ord(OppPlay) - ord('A')
-    MyIndex = ord(MyPlay) - ord('X')
-
-    # win/lose/draw points + the points for the play
-    return (matchPts[OppIndex][MyIndex] + MyIndex + 1)
-
-def FindPlay(OppPlay, ExpectedOutcome):    
-    """What move to enter to get the expected outcome based on the opponents move."""
-    # Find the reference into the array that determines what move I should make
-    OppIndex = ord(OppPlay) - ord('A')
-    MyIndex = ord(ExpectedOutcome) - ord('X')
-
-    # return the XYZ move that should be made to meet the expected outcome
-    # Use the opponents play and expected outcome.
-    return (inputToMatchOutcome[OppIndex][MyIndex])
 
 def IsStrUniqueChars(testStr):    
     """Is the string all unique characters."""
@@ -63,7 +45,7 @@ for index in range(len(myStr)):
     tmpStr = myStr[index:index+4]
 
     if IsStrUniqueChars(tmpStr):
-        print('Part 1:First unique number:',index+4)
+        print('Part 1:Start of Packet:',index+4)
         break
 
 
@@ -75,7 +57,7 @@ for index in range(len(myStr)):
     tmpStr = myStr[index:index+14]
 
     if IsStrUniqueChars(tmpStr):
-        print('Part 2:First unique number:',index+14)
+        print('Part 2:Start of message:',index+14)
         break
 
 #    print(tmpStr)
