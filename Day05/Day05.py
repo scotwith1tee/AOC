@@ -7,8 +7,8 @@ def MoveCrates(currMove):
     pass
 
 def FindNumbersInString(string):    
-    """Move the crates according to the move command """
-    res = [int(i) for i in string.split() if i.isdigit()]
+    """Find all positive AND negative integers in a string """
+    res = [int(d) for d in re.findall(r'-?\d+', string)]
     return res
 
 def PopulateStartingPileArrays(pileStr,numPiles):
