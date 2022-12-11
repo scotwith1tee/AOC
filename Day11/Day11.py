@@ -63,7 +63,15 @@ f.close()
 
 #Make the first dictionary item
 dictTemplate = dict(ID = 0, items = [9999], operation = "*", operand = "0", test = 51001, true = 100, false = 100)
-monkeys = []
+monkeys = [dictTemplate,dictTemplate]
+print("monkeys type: ", type(monkeys))
+print(monkeys)
+monkeys.append(dictTemplate)
+print(monkeys)
+dictTemplate["ID"] = 1
+monkeys.append(dictTemplate)
+print(monkeys)
+print("monkeys type: ", type(monkeys))
 
 # loop through the input to create the initial monkey dictionary array
 for i in range(len(array)):
