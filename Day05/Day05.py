@@ -1,4 +1,5 @@
 import datetime
+import re
 
 def MoveCrates(currMove):    
     """Move the crates according to the move command """
@@ -34,7 +35,8 @@ def PopulateStartingPileArrays(pileStr,numPiles):
                  #Put the crates in the rows and piles
     
         piles.append(stackList)
-    print(piles)    
+    print(piles)  
+    return piles  
 
 print("The date and time is:",datetime.datetime.now())
 
@@ -51,7 +53,7 @@ for i in range(len(array)):
         print('Num Piles:',numPiles)
         pileConfigStr = array[0:i]
         # find move list
-        moveList = array[i+1:]
+        moveList = array[i+2:]
         print(pileConfigStr)
         print('')
         print('')
@@ -60,7 +62,24 @@ for i in range(len(array)):
         break
 
 # create a 2d list array for crate configuration
-PopulateStartingPileArrays(pileConfigStr,numPiles)
+pileArray = PopulateStartingPileArrays(pileConfigStr,numPiles)
+print(moveList)
+print(pileArray)   
+
 # top crate is the last item on the crate list
 # Send the moves 1 at a time to modify the crate arrays
+for i in range(len(moveList)):
+    if moveList[i].find('move') < 0:
+        break
+    move = FindNumbersInString(moveList[i])
+    numCrates = move[0]
+    startPile = move[1]
+    destPile = move[2]
+    print(moveList[i])
+    print(move)
+    for j in range(move[0]):
+        # Move a box from the start pile to the dest
+
+
+
 # test find all numbers in a string
