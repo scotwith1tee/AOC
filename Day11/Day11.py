@@ -19,6 +19,7 @@ def CalcWorryLevel(num, oper, operand):
 
 def CalcWorryLevelNoDiv(num, oper, operand):    
     """Perform the opeation on the number then div 3 and round"""
+    #    print(type(num), type(oper), type(operand))
     if oper == '+':
         if operand == 'old':
             result = 2 * num
@@ -29,8 +30,12 @@ def CalcWorryLevelNoDiv(num, oper, operand):
             result = num * num
         else:
             result = num * int(operand)
+
+    # To avoid the big numbers do a modulus with the multiply of all the divide checks
+    result = result % 9699690
     # get the floor of a divide by 3
     #result = result // 3
+
     return int(result)
 
 def FindNumbersInString(string):    
@@ -48,8 +53,8 @@ print("*************************************************************")
 print("*************************************************************")
 
 #read in the data
-with open('testinput.txt','r') as f:
-#with open('input.txt','r') as f:
+#with open('testinput.txt','r') as f:
+with open('input.txt','r') as f:
     array = f.readlines()
 f.close()
 
@@ -58,7 +63,6 @@ monkeys =[]
 # loop through the input to create the initial monkey dictionary array
 for i in range(len(array)):
     # Look for the Monkey tag
-    print('i: ',i)
     if array[i].find('Monkey')>-1:
         # Grab the id, even though we will access it by the dictionary list number
         monkeys.append({ })
@@ -82,13 +86,14 @@ monkeyOrig = monkeys # Save for later
 print(*monkeys, sep='\n')
 print(" ")
 print(" Start throwning items")
-total = [0] * (len(monkeys)+1)
-for rnd in range(20):
+total = [0] * (len(monkeys))
+
+for rnd in range(10000):
     for m in range(len(monkeys)):
         for items in range(len(monkeys[m]['items'])):
             total[m] += 1
             currItem = monkeys[m]['items'][items]
-            wLevel = CalcWorryLevel(currItem, monkeys[m]['operation'], monkeys[m]['operand'])
+            wLevel = CalcWorryLevelNoDiv(currItem, monkeys[m]['operation'], monkeys[m]['operand'])
             if (wLevel % int(monkeys[m]['test'])) == 0:
                 target = int(monkeys[m]['true'])
             else:
@@ -100,42 +105,14 @@ for rnd in range(20):
         monkeys[m]['items'].clear()
         #print(*monkeys, sep='\n')
         #print(monkeys)
-print(total)
-
-total.sort()
-print(total[-1]*total[-2])
-print(total)
-print(*monkeys, sep='\n')
-
-print(" Part 2: start with orig, no divide by three")
-monkeys = monkeyOrig
-total = [0] * (len(monkeys)+1)
-for rnd in range(20):
-    for m in range(len(monkeys)):
-        for items in range(len(monkeys[m]['items'])):
-            total[m] += 1
-            currItem = monkeys[m]['items'][items]
-            wLevel = CalcWorryLevel(currItem, monkeys[m]['operation'], monkeys[m]['operand'])
-            if (wLevel % int(monkeys[m]['test'])) == 0:
-                target = int(monkeys[m]['true'])
-            else:
-                target = int(monkeys[m]['false'])
-            # Move the item to the target monkey
-            monkeys[target]['items'].append(wLevel)
-
-        #empty the list at the end because they've thrown all their items
-        monkeys[m]['items'].clear()
-        #print(*monkeys, sep='\n')
-        #print(monkeys)
-    if(rnd % 1000)==0:
-        print(rnd)
+    if(rnd%100)==0:
+        print('Round:',rnd)
         print(total)
+        print("The date and time is:",datetime.datetime.now())
 
 print(total)
 
 total.sort()
 print(total[-1]*total[-2])
 print(total)
-print(*monkeys, sep='\n')
-
-
+#print(*monkeys, sep='\n')
