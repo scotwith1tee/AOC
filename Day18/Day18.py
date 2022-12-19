@@ -35,6 +35,31 @@ def numSidesTouching(coords):
     if space[x][y][z+1] == 1:
         touches +=1
     return touches
+
+def numTouchingEnclosed(coords):
+    touches = 0
+    x = coords[0]
+    y = coords[1]
+    z = coords[2]
+    if edgeBlocks[x-1][y][z] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x-1,y,z)
+        touches +=1
+    if edgeBlocks[x+1][y][z] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x+1,y,z)
+        touches +=1
+    if edgeBlocks[x][y-1][z] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x,y-1,z)
+        touches +=1
+    if edgeBlocks[x][y+1][z] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x,y+1,z)
+        touches +=1
+    if edgeBlocks[x][y][z-1] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x,y,z-1)
+        touches +=1
+    if edgeBlocks[x][y][z+1] == 1:
+        print('Enclosed:',x,y,z,' is next to edge block: ',x,y,z+1)
+        touches +=1
+    return touches
 def isEnclosed(x, y, z):
     # if any of the surrounding blocks are empty, then this
     # block isn't enclosed air
@@ -52,7 +77,18 @@ def isEnclosed(x, y, z):
         return False
     return True
 
-
+def getNumOnes(list3d):
+    dims = dim(list3d)
+    total=0
+    for x in range(dims[0]):
+        for y in range(dims[1]):
+            for z in range(dims[2]):
+                if list3d[x][y][z] == 1:
+                    total += 1
+                    #print('Edge found at:',x,y,z)
+    return total
+                
+        
 
 
 
@@ -91,9 +127,11 @@ print('Size:',xMax,yMax,zMax)
 
 #create 3d array
 space = [[ [0 for cc1 in range(zMax+2)] for cc2 in range(yMax+2)] for r in range(xMax+2)]
+edgeBlocks = [[ [0 for cc1 in range(zMax+2)] for cc2 in range(yMax+2)] for r in range(xMax+2)]
+enclosed = [[ [0 for cc1 in range(zMax+2)] for cc2 in range(yMax+2)] for r in range(xMax+2)]
 
-print(space)  
-print('Type Space:',type(space))
+#print(space)  
+#print('Type Space:',type(space))
 print('dimensions:',dim(space))
 spaceDim = dim(space)
 
@@ -103,10 +141,9 @@ for i in range(len(inputCoord)):
     x = inputCoord[i][0]
     y = inputCoord[i][1]
     z = inputCoord[i][2]
-    print(x,y,z)
     space[x][y][z] = 1
 
-print(space) 
+#print(space) 
 totalSides = 0 
 #Loop through known points and count number of touches on each side
 # I believe there's room on the edges
@@ -114,6 +151,93 @@ for i in range(len(inputCoord)):
     totalSides += (6 - numSidesTouching(inputCoord[i]))
 
 print('Part 1, Total Exposed Sides:',totalSides)
+
+# Part two, look for external surface area
+# i don't think we care about the inside
+# Simplistic attempt, find the suraces exposed when looking from all
+# 6 sides. Won't find items under overhang
+# create a 3d array of just edge pieces
+
+
+#look from the left and right x views
+for y in range(1,yMax+1):
+    for z in range(1,zMax+1):
+        # for each block in the square, see if you can see it from left and then the right
+        for x in range(1,xMax+1):
+            if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+        for x in range(xMax+1,0,-1):
+            if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+
+#look from the top and bottom y views
+for x in range(1,xMax+1):
+   for z in range(1,zMax+1):
+        # for each block in the square, see if you can see it from left and then the right
+        for y in range(1,yMax+1):
+             if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+        for y in range(yMax+1,0,-1):
+             if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+#look from the front and back z views
+for y in range(1,yMax+1):
+    for x in range(1,xMax+1):
+        # for each block in the square, see if you can see it from left and then the right
+        for z in range(1,zMax+1):
+            if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+        for z in range(zMax+1,0,-1):
+            if space[x][y][z] == 1:
+                edgeBlocks[x][y][z] = 1
+                #print('edge block', x,y,z)
+                break
+
+totalSides = 0
+#loop through all the known edge pieces and count up edges
+for x in range(xMax+1):
+    for y in range(yMax+1):
+        for z in range(zMax+1):
+            if edgeBlocks[x][y][z] == 1:
+                CoordList = [x,y,z]
+                totalSides += (6 - numSidesTouching(CoordList))
+
+removeBecauseEnclosed = 0
+numEnclosedSpaces = 0
+# Find any full enclosed air space
+# Just search the entire map
+for x in range(1,xMax+1):
+    for y in range(1,yMax+1):
+        for z in range(1,zMax+1):
+            if space[x][y][z] == 0:
+                if isEnclosed(x,y,z)==True:
+                    #print('Enclosed Cell at: ',x,y,z)
+                    numEnclosedSpaces += 1
+                    enclosed[x][y][z] = 1
+                    #check to see if the enclosed space is next to an edge space
+                    removeBecauseEnclosed += numTouchingEnclosed([x,y,z])
+
+print('Edge Blocks Found:',getNumOnes(edgeBlocks))
+print('Sides to remove because edge block touches enclosed:',removeBecauseEnclosed)
+print('Enclosed gaps: ',numEnclosedSpaces)
+print('Total edge piece sides:', totalSides)
+# new try - find all the enclosed air cells and see if they are next to an edge cell
+# if they are remove 1 side
+print('Ajusted Surface Area:', totalSides - removeBecauseEnclosed) # - (42 * 6))
+#print(edgeBlocks)
+exit()
+
+
 
 airEnclosedSides = 0
 # Find any full enclosed air space
@@ -130,69 +254,3 @@ print('Enclosed pockets: ',airEnclosedSides /6)
 print('Part 2: Adjusted Surface Area: ',totalSides - airEnclosedSides)
 # I think the hint for part two is incorrect
 print(space[1][2][2],space[3][2][2],space[2][1][2],space[2][3][2],space[2][2][1],space[2][2][3])
-
-exit()
-#read in the data
-#with open('testinput.txt','r') as f:
-with open('input.txt','r') as f:
-    array = f.readlines()
-f.close()
-
-
-monkeys =[]
-# loop through the input to create the initial monkey dictionary array
-for i in range(len(array)):
-    # Look for the Monkey tag
-    if array[i].find('Monkey')>-1:
-        # Grab the id, even though we will access it by the dictionary list number
-        monkeys.append({ })
-        MonkeyId = FindNumbersInString(array[i])[0]
-        monkeys[MonkeyId]["ID"] = MonkeyId
-        # Load items from next line
-        monkeys[MonkeyId]["items"] = FindNumbersInString(array[i+1])
-        # Load operation and operand
-        tmpStr = array[i+2]
-        monkeys[MonkeyId]["operation"] = tmpStr[23]
-        if tmpStr[23:].find('old') >-1:
-            monkeys[MonkeyId]["operand"] = 'old'
-        else:
-            monkeys[MonkeyId]["operand"] = str(FindNumbersInString(tmpStr)[0])
-        # Load divisible test
-        monkeys[MonkeyId]["test"] = str(FindNumbersInString(array[i+3])[0])
-        # Load true and false monkey recipient
-        monkeys[MonkeyId]["true"] =  FindNumbersInString(array[i+4])[0]
-        monkeys[MonkeyId]["false"] = FindNumbersInString(array[i+5])[0]
-monkeyOrig = monkeys # Save for later
-print(*monkeys, sep='\n')
-print(" ")
-print(" Start throwning items")
-total = [0] * (len(monkeys))
-
-for rnd in range(10000):
-    for m in range(len(monkeys)):
-        for items in range(len(monkeys[m]['items'])):
-            total[m] += 1
-            currItem = monkeys[m]['items'][items]
-            wLevel = CalcWorryLevelNoDiv(currItem, monkeys[m]['operation'], monkeys[m]['operand'])
-            if (wLevel % int(monkeys[m]['test'])) == 0:
-                target = int(monkeys[m]['true'])
-            else:
-                target = int(monkeys[m]['false'])
-            # Move the item to the target monkey
-            monkeys[target]['items'].append(wLevel)
-
-        #empty the list at the end because they've thrown all their items
-        monkeys[m]['items'].clear()
-        #print(*monkeys, sep='\n')
-        #print(monkeys)
-    if(rnd%100)==0:
-        print('Round:',rnd)
-        print(total)
-        print("The date and time is:",datetime.datetime.now())
-
-print(total)
-
-total.sort()
-print(total[-1]*total[-2])
-print(total)
-#print(*monkeys, sep='\n')

@@ -1,0 +1,15 @@
+First guess was
+Part 1, Total Exposed Sides: 4322
+
+4070 is too high
+2487 is not the right answer
+2438 is not the right answer; edge blocks I can see - touches to enclosed block
+2235 is too low
+
+2060 seems to be the right answer. It's the exterior surfaces.
+
+Edge Blocks Found: 1104
+Sides to remove because edge block touches enclosed: 49
+Enclosed gaps:  42
+Total edge piece sides: 2487
+Ajusted Surface Area: 2438
