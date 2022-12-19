@@ -105,10 +105,6 @@ for rnd in range(10000):
         monkeys[m]['items'].clear()
         #print(*monkeys, sep='\n')
         #print(monkeys)
-    if(rnd%100)==0:
-        print('Round:',rnd)
-        print(total)
-        print("The date and time is:",datetime.datetime.now())
 
 print(total)
 
