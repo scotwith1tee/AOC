@@ -35,13 +35,12 @@ def PopulateStartingPileArrays(pileStr,numPiles):
                  #Put the crates in the rows and piles
     
         piles.append(stackList)
-    print(piles)  
     return piles  
 
 print("The date and time is:",datetime.datetime.now())
 
 #read in the data
-with open('testinput.txt','r') as f:
+with open('input.txt','r') as f:
     array = f.readlines()
 f.close()
 
@@ -55,16 +54,13 @@ for i in range(len(array)):
         # find move list
         moveList = array[i+2:]
         print(pileConfigStr)
-        print('')
-        print('')
-        print('')
-        print(moveList)
         break
 
 # create a 2d list array for crate configuration
 pileArray = PopulateStartingPileArrays(pileConfigStr,numPiles)
 print(moveList)
 print(pileArray)   
+partPiles = [x[:] for x in pileArray] # save a copy for later
 
 # top crate is the last item on the crate list
 # Send the moves 1 at a time to modify the crate arrays
@@ -73,13 +69,57 @@ for i in range(len(moveList)):
         break
     move = FindNumbersInString(moveList[i])
     numCrates = move[0]
-    startPile = move[1]
-    destPile = move[2]
+    startPile = move[1]-1
+    destPile = move[2]-1
     print(moveList[i])
     print(move)
     for j in range(move[0]):
-        # Move a box from the start pile to the dest
+        #Move a box from the start pile to the dest
+        crate = pileArray[startPile].pop()
+        pileArray[destPile].append(crate)
+
+print (pileArray)
 
 
 
 # test find all numbers in a string
+outputList = []
+for i in range(numPiles):
+    outputList.append(pileArray[i][-1])
+
+print ('Part 1:',*outputList)
+
+
+pileArray =  [x[:] for x in partPiles]
+#Part 2: Now we can move multiple items at once
+# Send the moves 1 at a time to modify the crate arrays
+for i in range(len(moveList)):
+    if moveList[i].find('move') < 0:
+        break
+    move = FindNumbersInString(moveList[i])
+    numCrates = move[0]*-1
+    startPile = move[1]-1
+    destPile = move[2]-1
+    endIndex = len(pileArray[destPile])
+    print(moveList[i])
+    print(move)
+    crates = pileArray[startPile][numCrates::1]
+    pileArray[destPile][endIndex:endIndex] = crates
+    numCrates = numCrates * -1
+    # Pop off the number of crates
+    for j in range(numCrates):
+        junk = pileArray[startPile].pop()
+
+print (pileArray)
+
+
+
+# test find all numbers in a string
+outputList = []
+for i in range(numPiles):
+    outputList.append(pileArray[i][-1])
+
+print ('Part 2:',*outputList)
+
+
+
