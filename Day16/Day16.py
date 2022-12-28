@@ -1,117 +1,109 @@
-import datetime
+import sys
 import re
-# The number of vertices
-nV = 4
 
-INF = 999
+INF = sys.maxsize
 
+def floyd_warshall(graph):
+    source_vertices = [column[0] for column in graph]
+    destination_vertices = [column[1] for column in graph]
+    vertices = list(set(source_vertices) | set(destination_vertices))
 
-# Algorithm implementation
-def floyd_warshall(G):
-    distance = list(map(lambda i: list(map(lambda j: j, i)), G))
+    distance = [[INF] * len(vertices) for i in range(len(vertices))]
+    next_vertices  = [[0]   * len(vertices) for i in range(len(vertices))]
 
-    # Adding vertices individually
-    for k in range(nV):
-        for i in range(nV):
-            for j in range(nV):
-                distance[i][j] = min(distance[i][j], distance[i][k] + distance[k][j])
-    print_solution(distance)
+    for i in range(len(vertices)):
+        distance[i][i] = 0
+    for source, destination, weight in graph:
+        distance[source-1][destination-1] = weight
+        next_vertices[source-1][destination-1] = destination-1
 
+    for k in range(len(vertices)):
+        for i in range(len(vertices)):
+            for j in range(len(vertices)):
+                if distance[i][j] > distance[i][k] + distance[k][j]:
+                    distance[i][j] = distance[i][k] + distance[k][j]
+                    next_vertices[i][j]  = next_vertices[i][k]
 
-# Printing the solution
-def print_solution(distance):
-    for i in range(nV):
-        for j in range(nV):
-            if(distance[i][j] == INF):
-                print("INF", end=" ")
-            else:
-                print(distance[i][j], end="  ")
-        print(" ")
+    path_reconstruction(distance, next_vertices)
 
-
-G = [[0, 3, INF, 5],
-         [2, 0, INF, 4],
-         [INF, 1, 0, INF],
-         [INF, INF, 2, 0]]
+def path_reconstruction(dist, nxt):
+    print("Edge \t\t Distance \t Shortest Path")
+    for i in range(len(dist)):
+        for j in range(len(dist)):
+            if i != j:
+                path = [i]
+                while path[-1] != j:
+                    path.append(nxt[path[-1]][j])
+                print("(%d, %d) \t\t %2d \t\t %s"
+                      % (i + 1, j + 1, dist[i][j], ' - '.join(str(p + 1) for p in path)))
+    print()
 
 def FindNumbersInString(string):    
     """Find all positive AND negative integers in a string """
     res = [int(d) for d in re.findall(r'-?\d+', string)]
     return res
+def ConvertValveToIndex(name):
+    global valves
+    return valves[name]
 
-print(" ")
-print(" ")
-print(" ")
-print("*************************************************************")
-print("*************************************************************")
-print("The date and time is:",datetime.datetime.now())
-print("*************************************************************")
-print("*************************************************************")
+def main():
+
+    # Create the edge list
+    #read in the data
+    with open('testinput.txt','r') as f:
+    #with open('input.txt','r') as f:
+        array = f.readlines()
+    f.close()
+
+    edge_list =[]
+    valves = {} # Names of the valves indexed in dict
+
+    flow = []
+    # loop through the input to find all the valves
+    for i in range(len(array)):
+        valves[array[i][6:8]]=i
+        flow.append(FindNumbersInString(array[i])[0])
+    # lets build the edge list
+    for i in range(len(array)):
+        line = array[i]
+        #find first valve
+        start = line.find('valves') + 7
+        #always one destination
+        dest = line[start:start+2]
+        edge_list.append([i,valves[dest], 1])
+
+        # Look for more destinations
+        while(line.find(',',start)>=0):
+            start = line.find(',',start) + 2
+            dest = line[start:start+2]
+            edge_list.append([i,valves[dest], 1])
+
+    print(edge_list)
 
 
-floyd_warshall(G)
-exit()
-#read in the data
-#with open('testinput.txt','r') as f:
-with open('input.txt','r') as f:
-    array = f.readlines()
-f.close()
+    edge_list1 = [
+        [1, 3, -2],
+        [2, 1, 4],
+        [2, 3, 3],
+        [3, 4, 2],
+        [4, 2, -1]
+    ]
+    edge_list2 = [
+        [1, 2, 10],
+        [1, 3, 20],
+        [1, 4, 30],
+        [2, 6, 7],
+        [3, 6, 5],
+        [4, 5, 10],
+        [5, 1, 2],
+        [5, 6, 4],
+        [6, 2, 5],
+        [6, 3, 7],
+        [6, 5, 6]
+    ]
 
+    floyd_warshall(edge_list1)
+    floyd_warshall(edge_list2)
 
-monkeys =[]
-# loop through the input to create the initial monkey dictionary array
-for i in range(len(array)):
-    # Look for the Monkey tag
-    if array[i].find('Monkey')>-1:
-        # Grab the id, even though we will access it by the dictionary list number
-        monkeys.append({ })
-        MonkeyId = FindNumbersInString(array[i])[0]
-        monkeys[MonkeyId]["ID"] = MonkeyId
-        # Load items from next line
-        monkeys[MonkeyId]["items"] = FindNumbersInString(array[i+1])
-        # Load operation and operand
-        tmpStr = array[i+2]
-        monkeys[MonkeyId]["operation"] = tmpStr[23]
-        if tmpStr[23:].find('old') >-1:
-            monkeys[MonkeyId]["operand"] = 'old'
-        else:
-            monkeys[MonkeyId]["operand"] = str(FindNumbersInString(tmpStr)[0])
-        # Load divisible test
-        monkeys[MonkeyId]["test"] = str(FindNumbersInString(array[i+3])[0])
-        # Load true and false monkey recipient
-        monkeys[MonkeyId]["true"] =  FindNumbersInString(array[i+4])[0]
-        monkeys[MonkeyId]["false"] = FindNumbersInString(array[i+5])[0]
-monkeyOrig = monkeys # Save for later
-print(*monkeys, sep='\n')
-print(" ")
-print(" Start throwning items")
-total = [0] * (len(monkeys))
-
-for rnd in range(10000):
-    for m in range(len(monkeys)):
-        for items in range(len(monkeys[m]['items'])):
-            total[m] += 1
-            currItem = monkeys[m]['items'][items]
-            wLevel = CalcWorryLevelNoDiv(currItem, monkeys[m]['operation'], monkeys[m]['operand'])
-            if (wLevel % int(monkeys[m]['test'])) == 0:
-                target = int(monkeys[m]['true'])
-            else:
-                target = int(monkeys[m]['false'])
-            # Move the item to the target monkey
-            monkeys[target]['items'].append(wLevel)
-
-        #empty the list at the end because they've thrown all their items
-        monkeys[m]['items'].clear()
-        #print(*monkeys, sep='\n')
-        #print(monkeys)
-    if(rnd%100)==0:
-        print('Round:',rnd)
-        print(total)
-        print("The date and time is:",datetime.datetime.now())
-
-print(total)
-
-total.sort()
-print(total[-1]*total[-2])
-print(total)
-#print(*monkeys, sep='\n')
+if __name__ == '__main__':
+    main()
