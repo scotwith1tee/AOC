@@ -38,11 +38,11 @@ def path_reconstruction(dist, nxt):
                 path = [i]
                 while path[-1] != j:
                     path.append(nxt[path[-1]][j])
-                print("(%d, %d) \t\t %2d \t\t %s"
-                      % (i, j, dist[i][j], ' - '.join(str(p) for p in path)))
+                #print("(%d, %d) \t\t %2d \t\t %s"
+                #      % (i, j, dist[i][j], ' - '.join(str(p) for p in path)))
                 pathes[i][j] = path
 
-    print()
+    #print()
     return pathes
 
 def FindNumbersInString(string):    
@@ -66,6 +66,7 @@ def RunSim(start, valveOrder):
             # Find the next valve. If we are out of valves just wait
             if valveIndex < len(valveOrder):
                 targetNode = valveOrder[valveIndex]
+                #check to see if we can get to the node and turn it on before time runs out
                 # start to move to target down the first step towards the target
                 currNode = pathes[currNode][targetNode][1]
                 valveIndex += 1
@@ -80,13 +81,14 @@ def RunSim(start, valveOrder):
             # we are in transit
             currNode = pathes[currNode][targetNode][1]
         #print('Min: ',m,' flowrate: ',flowPerMin, ' totFlow: ', totFlow,' Curr: ', currNode,' Target:',targetNode)
-    return totFlow
+    return [totFlow, waits]
+
 def main():
     global valves, pathes, flow 
     # Create the edge list
     #read in the data
-    with open('testinput.txt','r') as f:
-    #with open('input.txt','r') as f:
+    #with open('testinput.txt','r') as f:
+    with open('input.txt','r') as f:
         array = f.readlines()
     f.close()
 
@@ -116,12 +118,13 @@ def main():
             dest = line[start:start+2]
             edge_list.append([i,valves[dest], 1])
 
-    print(*edge_list, sep="\n")
+    #print(*edge_list, sep="\n")
 
     cont = floyd_warshall(edge_list)
     dist = cont[0]
     pathes = cont[1]
-
+    # should I consolidate the graph to just valves with a flow rate?
+    
     activeValves = []
     activeFlow = []
     # Create a list of valves we really care about with pressure
@@ -133,7 +136,7 @@ def main():
     tmpFlow = list(activeFlow)
     tmpFlow.sort(reverse=True)
     # Pick the top flow valves to limit the problem
-    for i in range(6):
+    for i in range(4):
         maxIndex = activeFlow.index(tmpFlow[i])
         active.append(activeValves[maxIndex])
 
@@ -142,53 +145,17 @@ def main():
     # Create a list of all possible orders of the valves we care about
     #allIndexes = list(permutations(range(len(activeValves)), len(activeValves)))        
     allValves = list(map(list, permutations(active)))
-    print('Found all the combos')
+    print('Combinations: ', len(allValves))
 
     maxFlow = 0
     for i in range(len(allValves)):
-        total = RunSim(valves['AA'], allValves[i])
+        [total, numWaits] = RunSim(valves['AA'], allValves[i])
         if total > maxFlow:
             maxFlow = total
-    print('Max Flow = ', maxFlow)
-
-    # We should have everything we need to calculate the optimal valve openings
-    totFlow = 0
-    flowPerMin = 0
-    currNode = valves['AA']
-    targetNode = 1000
-    weight = [0] * len(dist[0])
-    for m in range(1,31):
-        totFlow += flowPerMin
-        if targetNode > 500: # find a new target  
-            # find the best valve option from where I am right now
-            # divide the flow by the distance to the valve
-            valvesAvail = False
-            for i in range(len(dist[currNode])):
-                if dist[currNode][i] == 0 or flow[i] == 0:
-                    weight[i] = 0
-                else:
-                    weight[i] = flow[i]/dist[currNode][i]
-                    valvesAvail = True # We found a valve with pressure
-            # if there are no more valves with pressure just wait
-            if valvesAvail == True:
-                #find the max index
-                targetNode = weight.index(max(weight))
-                # start to move to target down the first step towards the target
-                currNode = pathes[currNode][targetNode][1]
-        elif currNode == targetNode:
-            # Turn on the valve
-            flowPerMin += flow[currNode]
-            # Set the valve flow to zero so we don't find it later
-            flow[currNode] = 0
-            targetNode = 1000
-        else:
-            # we are in transit
-            currNode = pathes[currNode][targetNode][1]
-        print('Min: ',m,' flowrate: ',flowPerMin, ' totFlow: ', totFlow,' Curr: ', currNode,' Target:',targetNode)
-
-
-
-
+            waits = numWaits
+            bestValves = allValves[i]
+    print('Max Flow = ', maxFlow, ' Num Waits = ',waits)
+    print('Winning Valves: ',bestValves)
 
 
     print("")
