@@ -1,0 +1,30 @@
+PS E:\Documents\GitHub\AOC\Day16> & C:/Users/spike/AppData/Local/Programs/Python/Python311/python.exe e:/Documents/GitHub/AOC/Day16/Day16.py
+Edge             Distance        Shortest Path
+Edge             Distance        Shortest Path
+Combinations:  360360
+Max Flow =  1889  Num Waits =  12
+Winning Valves:  [14, 1, 15, 10, 5]
+
+PS E:\Documents\GitHub\AOC\Day16> & C:/Users/spike/AppData/Local/Programs/Python/Python311/python.exe e:/Documents/GitHub/AOC/Day16/Day16.py
+Edge             Distance        Shortest Path
+Edge             Distance        Shortest Path
+Combinations:  3603600
+[24, 16, 25, 17, 23, 14, 11, 6, 19, 21, 18, 10, 22, 15, 20]
+Max Flow =  2029  Num Waits =  11
+Winning Valves:  [11, 7, 4, 10, 15, 1]
+
+PS E:\Documents\GitHub\AOC\Day16> & C:/Users/spike/AppData/Local/Programs/Python/Python311/python.exe e:/Documents/GitHub/AOC/Day16/Day16.py
+Edge             Distance        Shortest Path
+Edge             Distance        Shortest Path
+Combinations:  32432400
+[24, 16, 25, 17, 23, 14, 11, 6, 19, 21, 18, 10, 22, 15, 20]
+Max Flow =  2166  Num Waits =  7
+Winning Valves:  [7, 4, 10, 15, 1, 9, 13]
+
+PS E:\Documents\GitHub\AOC\Day16> & C:/Users/spike/AppData/Local/Programs/Python/Python311/python.exe e:/Documents/GitHub/AOC/Day16/Day16.py
+Edge             Distance        Shortest Path
+Edge             Distance        Shortest Path
+Combinations:  259459200
+[24, 16, 25, 17, 23, 14, 11, 6, 19, 21, 18, 10, 22, 15, 20]
+Max Flow =  2250  Num Waits =  4
+Winning Valves:  [11, 7, 4, 10, 15, 1, 9, 13]

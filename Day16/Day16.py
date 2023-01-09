@@ -192,12 +192,12 @@ def main():
 
 
     
-    active = [1,2,4,7,8,9,10,12,13,15]
-    active = [11, 10, 15, 1, 9]
-    [total, numWaits] = RunSim(0, active,30)
+    #active = [1,2,4,7,8,9,10,12,13,15]
+    #active = [11, 10, 15, 1, 9]
+    #[total, numWaits] = RunSim(0, active,30)
     # Create a list of all possible orders of the valves we care about
     #allIndexes = list(permutations(range(len(activeValves)), len(activeValves)))        
-    allValves = list(map(list, permutations(active)))
+    allValves = list(map(list, permutations(activeValves,8)))
     print('Combinations: ', len(allValves))
     print(activeFlow)
     maxFlow = 0
