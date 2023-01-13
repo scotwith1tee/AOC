@@ -194,19 +194,33 @@ def main():
     
     #active = [1,2,4,7,8,9,10,12,13,15]
     #active = [11, 10, 15, 1, 9]
+    starting = [11, 7, 4, 10, 15, 1, 9, 13]
+    #starting = [7, 4, 10, 15, 1, 9, 13]
+    #starting = [11, 7, 4, 10, 15, 1]
+    otherValves = []
+    for i in range(len(activeValves)):
+        if activeValves[i] in starting:
+            print('')
+        else:
+            otherValves.append(activeValves[i])
+            
+    print('Other valves', otherValves)
+
     #[total, numWaits] = RunSim(0, active,30)
     # Create a list of all possible orders of the valves we care about
     #allIndexes = list(permutations(range(len(activeValves)), len(activeValves)))        
-    allValves = list(map(list, permutations(activeValves,8)))
+    #allValves = list(map(list, permutations(activeValves,8)))
+    allValves = list(map(list, permutations(otherValves)))
     print('Combinations: ', len(allValves))
     print(activeFlow)
     maxFlow = 0
     for i in range(len(allValves)):
-        [total, numWaits] = RunSim(0, allValves[i],30)
+
+        [total, numWaits] = RunSim(0, starting + allValves[i],30)
         if total > maxFlow:
             maxFlow = total
             waits = numWaits
-            bestValves = allValves[i]
+            bestValves = starting + allValves[i]
     print('Max Flow = ', maxFlow, ' Num Waits = ',waits)
     print('Winning Valves: ',bestValves)
 
